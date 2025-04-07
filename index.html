@@ -1,71 +1,113 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>PhotoConverter</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>PhotoConverter - Convert Any Image</title>
   <style>
     body {
-      font-family: Arial, sans-serif;
-      text-align: center;
-      padding: 50px;
-      background: #f4f4f4;
+      font-family: 'Segoe UI', sans-serif;
+      background: #0e0e0e;
+      color: #fff;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 40px;
     }
     h1 {
-      color: #333;
+      font-size: 2.5em;
+      margin-bottom: 20px;
+      color: #00ffe7;
+    }
+    .container {
+      background: #1e1e1e;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 0 10px #00ffe7;
+      max-width: 500px;
+      width: 100%;
     }
     input, select, button {
-      padding: 10px;
-      margin: 10px;
+      width: 100%;
+      padding: 12px;
+      margin: 10px 0;
+      border: none;
+      border-radius: 6px;
+      font-size: 1em;
+    }
+    input[type="file"] {
+      background: #333;
+      color: #fff;
+    }
+    select {
+      background: #292929;
+      color: #00ffe7;
+    }
+    button {
+      background: #00ffe7;
+      color: #000;
+      cursor: pointer;
+      font-weight: bold;
+    }
+    a {
+      display: block;
+      margin-top: 15px;
+      color: #00ffe7;
+      text-align: center;
+      text-decoration: none;
+    }
+    footer {
+      margin-top: 40px;
+      font-size: 0.8em;
+      color: #666;
     }
   </style>
 </head>
 <body>
   <h1>PhotoConverter</h1>
-  <p>Upload your image and convert it to your desired format</p>
+  <div class="container">
+    <input type="file" id="upload" accept="image/*">
+    <select id="format">
+      <option value="image/png">PNG</option>
+      <option value="image/jpeg">JPG</option>
+      <option value="image/webp">WEBP</option>
+      <option value="image/bmp">BMP</option>
+      <option value="image/gif">GIF</option>
+    </select>
+    <button onclick="convertImage()">Convert Image</button>
+    <a id="downloadLink" style="display:none">Download Converted Image</a>
+  </div>
 
-  <input type="file" id="upload" accept="image/*"><br>
-  <label for="format">Convert to:</label>
-  <select id="format">
-    <option value="image/jpeg">JPG</option>
-    <option value="image/png">PNG</option>
-    <option value="image/webp">WEBP</option>
-    <option value="image/bmp">BMP</option>
-  </select><br>
-  <button onclick="convertImage()">Convert</button>
-
-  <h3 id="status"></h3>
-  <a id="downloadLink" style="display: none;" download="converted-image">Download Image</a>
+  <footer>Created with futuristic vision - inspired by Elon Musk</footer>
 
   <script>
     function convertImage() {
-      const file = document.getElementById('upload').files[0];
+      const fileInput = document.getElementById('upload');
       const format = document.getElementById('format').value;
 
-      if (!file) {
-        alert("Please upload an image first.");
+      if (!fileInput.files.length) {
+        alert("Please select an image first.");
         return;
       }
 
       const reader = new FileReader();
-      reader.onload = function(e) {
+      reader.onload = function (event) {
         const img = new Image();
-        img.onload = function() {
+        img.onload = function () {
           const canvas = document.createElement('canvas');
           canvas.width = img.width;
           canvas.height = img.height;
           const ctx = canvas.getContext('2d');
           ctx.drawImage(img, 0, 0);
-          const converted = canvas.toDataURL(format);
           const link = document.getElementById('downloadLink');
-          link.href = converted;
-          link.download = 'converted-image.' + format.split('/')[1];
+          link.href = canvas.toDataURL(format);
+          link.download = "converted-image." + format.split('/')[1];
           link.style.display = 'block';
-          link.innerText = 'Download Converted Image';
-          document.getElementById('status').innerText = "Conversion successful!";
         };
-        img.src = e.target.result;
+        img.src = event.target.result;
       };
-      reader.readAsDataURL(file);
+      reader.readAsDataURL(fileInput.files[0]);
     }
   </script>
 </body>
